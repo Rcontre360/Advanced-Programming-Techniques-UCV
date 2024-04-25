@@ -5,5 +5,7 @@
 
 std::string processInput(const std::string& input);
 
+bool validate(const std::string& output);
+
 #endif
 

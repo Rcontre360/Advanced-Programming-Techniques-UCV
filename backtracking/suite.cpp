@@ -18,19 +18,27 @@ void resetColor() {
     cout << "\033[0m";
 }
 
-int main() {
-    const string testFolder = "./tests/";  // Folder where tests are stored
+bool useValidationFunction(int argc, char* argv[]) {
+    for (int i = 1; i < argc; ++i) {
+        string arg = argv[i];
+        if (arg == "-v" || arg == "--validate") {
+            return true;
+        }
+    }
+    return false;
+}
+
+int main(int argc, char* argv[]) {
+    const string testFolder = "./tests/";
     int testNum = 1;
     string inputFile, expectedFile, line, input, expected;
+    bool useValidate = useValidationFunction(argc, argv);
 
     while (true) {
         inputFile = testFolder + "input_" + to_string(testNum) + "_.txt";
-        expectedFile = testFolder + "output_" + to_string(testNum) + "_.txt";
-
         ifstream inputFS(inputFile);
-        ifstream expectedFS(expectedFile);
 
-        if (!inputFS.is_open() || !expectedFS.is_open()) {
+        if (!inputFS.is_open()) {
             break;  // Stop when files are not found
         }
 
@@ -38,28 +46,44 @@ int main() {
         stringstream strStream;
         strStream << inputFS.rdbuf();
         input = strStream.str();
-
-        // Get expected output
-        getline(expectedFS, expected);
+        inputFS.close();
 
         // Process the input
         string result = processInput(input);
-        
+
+        bool success;
+        if (useValidate) {
+            success = validate(result);  // Assume validate returns a bool
+        } else {
+            expectedFile = testFolder + "output_" + to_string(testNum) + "_.txt";
+            ifstream expectedFS(expectedFile);
+            if (!expectedFS.is_open()) {
+                cout << "Test " << testNum << ": Expected output file missing." << endl;
+                testNum++;
+                continue;
+            }
+            getline(expectedFS, expected);
+            expectedFS.close();
+
+            success = (result == expected);
+        }
+
         // Display result
-        if (result == expected) {
+        if (success) {
             setColor(2);
             cout << "Test " << testNum << ": Success" << endl;
         } else {
             setColor(4);
-            cout << "Test " << testNum << ": Failure - Expected " << expected << ", got " << result << endl;
+            if (!useValidate) {
+                cout << "Test " << testNum << ": Failure - Expected " << expected << ", got " << result << endl;
+            } else {
+                cout << "Test " << testNum << ": Validation Failed - Result: " << result << endl;
+            }
         }
         resetColor();
 
-        inputFS.close();
-        expectedFS.close();
         testNum++;
     }
 
     return 0;
 }
-
