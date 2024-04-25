@@ -1,4 +1,5 @@
 #include "processing.h"
+#include "ran3.cpp"
 
 #include <vector>
 #include <iostream>
@@ -68,7 +69,8 @@ public:
         if (step == N){
             return true;
         } 
-        for (auto i:this->candidates()){
+        vector<int> cand = this->candidates();
+        for (auto i:cand){
             if (validPos(step,i)){
                 insertQueen(step,i);
                 if (solve(step+1))
@@ -96,40 +98,37 @@ class NQeensFull : public NQueensBase{
 class NQeensPartial : public NQueensBase{
     private:
         int prob;
-        mt19937 gen;
-        uniform_int_distribution<> dist;
+        long seed;
 
-        int getPos(vector<bool> &created){
+        int nextPos(vector<bool> &created){
+            int n = created.size();
             int res;
             do{
-                res = dist(gen);
+                res = int(ran3(&seed) * 100000) % n;
             }while(created[res]);
+            created[res] = true;
             return res;
         }
 
         vector<int> candidates(){
             vector<int> res(N * prob / 100);
             vector<bool> created(N);
-            for (int i=0;i < res.size(); i++)
-                res[i] = getPos(created);
+            for (int i=0;i < int(res.size()); i++){
+                res[i] = nextPos(created);
+            }
             return res;
         }
 
     public: 
         NQeensPartial(int n,int _prob) : NQueensBase(n) {
-            random_device rd; 
-            mt19937 _gen(rd()); 
-            uniform_int_distribution<> _dist(0, n); 
-
             prob = _prob;
-            dist = _dist;
-            gen = _gen;
+            seed = -time(0);
         }
 };
 
 int main(){
 // string processInput(const string& input) {
-    NQeensFull* prob = new NQeensFull(4);
+    NQeensFull* prob = new NQeensFull(40);
     string res = "";
 
     prob->solve(0);
