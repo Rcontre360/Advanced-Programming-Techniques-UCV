@@ -7,11 +7,11 @@ TEST_ARGS = "--validate"
 # Ensure the bin directory exists and specify output directory for executables
 build:
 	mkdir -p bin
-	$(CXX) $(CXXFLAGS) -o bin/processing processing.cpp
+	$(CXX) $(CXXFLAGS) -o bin/benchmark benchmark.cpp
 
 # Compile and run the main program
 run: build
-	./bin/processing
+	./bin/benchmark
 
 # Compile and run the test suite with optional arguments
 test:
