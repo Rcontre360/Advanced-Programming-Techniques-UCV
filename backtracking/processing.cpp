@@ -101,21 +101,14 @@ class NQeensPartial : public NQueensBase{
         int prob;
         long seed;
 
-        int nextPos(vector<bool> &created){
-            int n = created.size();
-            int res;
-            do{
-                res = int(ran3(&seed) * 100000) % n;
-            }while(created[res]);
-            created[res] = true;
-            return res;
+        int nextPos(){
+            return int(ran3(&seed) * 100000) % N;
         }
 
         vector<int> candidates(){
             vector<int> res(N * prob / 100);
-            vector<bool> created(N);
             for (int i=0;i < int(res.size()); i++){
-                res[i] = nextPos(created);
+                res[i] = nextPos();
             }
             return res;
         }

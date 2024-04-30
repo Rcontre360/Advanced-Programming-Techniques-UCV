@@ -1,5 +1,5 @@
 CXX = g++
-CXXFLAGS = -std=c++17 -Wall
+CXXFLAGS = -std=c++17 -Wall -release
 
 # Use 'make TEST_ARGS="--validate"' to enable validation
 TEST_ARGS = "--validate"
