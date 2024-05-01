@@ -6,9 +6,9 @@
 #include <iostream>
 #include <ctime>
 
-#define START_N 36
-#define END_N 40
-#define RUNS_ON_N 20
+#define START_N 45
+#define END_N 45
+#define RUNS_ON_N 1
 #define PARTIAL 30
 #define FULL_RESULTS "benchmark/deterministic.csv"
 #define PARTIAL_RESULTS "benchmark/randomized.csv"
