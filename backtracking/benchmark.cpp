@@ -6,9 +6,9 @@
 #include <iostream>
 #include <ctime>
 
-#define START_N 8
-#define END_N 45
-#define RUNS_ON_N 1
+#define START_N 36
+#define END_N 40
+#define RUNS_ON_N 20
 #define PARTIAL 30
 #define FULL_RESULTS "benchmark/deterministic.csv"
 #define PARTIAL_RESULTS "benchmark/randomized.csv"
@@ -22,7 +22,6 @@ struct TestResult {
 };
 
 TestResult singleTest(int n, bool isFull) {
-    cout << "SOLVING: " << n << endl;
     TestResult res = TestResult{0,0};
     auto start = high_resolution_clock::now();
 
@@ -59,6 +58,7 @@ void runBenchmark(const string& filename, bool isFull) {
         double totalDuration = 0;
         int successfulRuns = 0;
 
+        cout << "SOLVING: " << n << endl;
         for (int i = 0; i < RUNS_ON_N; i++) {
             TestResult res = singleTest(n,isFull);
             totalDuration += res.runTime;
