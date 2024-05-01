@@ -95,10 +95,11 @@ class NQeensFull : public NQueensBase{
         }
 };
 
+long seed = -42;
+
 class NQeensPartial : public NQueensBase{
     private:
         int prob;
-        long seed;
 
         int nextPos(){
             return int(ran3(&seed) * 100000) % N;
@@ -121,6 +122,5 @@ class NQeensPartial : public NQueensBase{
     public: 
         NQeensPartial(int n,int _prob) : NQueensBase(n) {
             prob = _prob;
-            seed = -time(0);
         }
 };

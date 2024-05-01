@@ -6,9 +6,9 @@
 #include <iostream>
 #include <ctime>
 
-#define START_N 45
-#define END_N 45
-#define RUNS_ON_N 1
+#define START_N 8
+#define END_N 8
+#define RUNS_ON_N 20000
 #define PARTIAL 30
 #define FULL_RESULTS "benchmark/deterministic.csv"
 #define PARTIAL_RESULTS "benchmark/randomized.csv"
@@ -23,10 +23,11 @@ struct TestResult {
 
 TestResult singleTest(int n, bool isFull) {
     TestResult res = TestResult{0,0};
-    auto start = high_resolution_clock::now();
 
     NQueensBase* problem = isFull ? static_cast<NQueensBase*>(new NQeensFull(n))
                                   : static_cast<NQueensBase*>(new NQeensPartial(n, PARTIAL));
+
+    auto start = high_resolution_clock::now();
 
     if (problem->solve(0)) {
         auto end = high_resolution_clock::now();
@@ -65,8 +66,9 @@ void runBenchmark(const string& filename, bool isFull) {
             successfulRuns += res.successfulRuns;
         }
 
+        cout << "WHAAT " << " " << successfulRuns << endl;
         file << n << ", "
-                   << (totalDuration / RUNS_ON_N) << " ms, "
+                   << double(totalDuration / RUNS_ON_N) << " ms, "
                    << (successfulRuns * 100.0 / RUNS_ON_N) << "%, "
                    << RUNS_ON_N << "\n";
     }
