@@ -1,4 +1,3 @@
-#include "processing.h"
 #include "nqueens.cpp"
 
 #include <sstream>

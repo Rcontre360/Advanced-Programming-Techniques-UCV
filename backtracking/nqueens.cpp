@@ -106,13 +106,13 @@ class NQeensPartial : public NQueensBase{
         }
 
         vector<int> candidates(){
-            vector<int> res(N * prob / 100);
+            vector<int> res;
             vector<bool> used(N);
 
-            for (int i=0;i < int(res.size()); i++){
+            for (int i=0;i < int(N * prob / 100); i++){
                 int rnd = nextPos();
                 if (!used[rnd]){
-                    res[i] = rnd;
+                    res.push_back(rnd);
                     used[rnd] = true;
                 } 
             }

@@ -1,14 +1,12 @@
 #include "processing.cpp"
 #include <thread>
 #include <fstream>
-#include <chrono>
 #include <vector>
 #include <iostream>
-#include <ctime>
 
 #define START_N 8
-#define END_N 8
-#define RUNS_ON_N 20000
+#define END_N 50
+#define RUNS_ON_N 1
 #define PARTIAL 30
 #define FULL_RESULTS "benchmark/deterministic.csv"
 #define PARTIAL_RESULTS "benchmark/randomized.csv"
