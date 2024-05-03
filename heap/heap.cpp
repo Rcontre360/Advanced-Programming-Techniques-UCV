@@ -27,7 +27,7 @@ using namespace std;
 //template <class T> class Heap : public IHeap<T> {
 template <class T> class Heap {
 private:
-  vector<T> elements;
+  vector<T> elements = vector<T>(1);
 
   int parent(int pos) {
     return (pos - 1) / 2 >= 0 && (pos - 1) / 2 < elements.size()
@@ -46,31 +46,27 @@ private:
   }
 
   void swim(int i) {
-    if (parent(i) != -1 && elements[i] < elements[parent(i)]) {
-      std::swap(elements[i], elements[parent(i)]);
-      swim(parent(i));
+    while (i > 1 && elements[ i / 2 ] > elements[i]){
+      std::swap(elements[i], elements[i/2]);
+      i = i/2;
     }
   }
 
   void sink(int i) {
-    int mn = i;
-    if (left(i) != -1 && elements[left(i)] < elements[i])
-      mn = left(i);
-    if (right(i) != -1 && elements[right(i)] < elements[mn])
-      mn = right(i);
-    if (mn != i) {
-      std::swap(elements[i], elements[mn]);
-      sink(mn);
+    int n = elements.size();
+    while (2*i <= n){
+      int j = 2*i;
+
+      if (j < n && elements[j]>elements[j+1]) j++;
+      if (elements[i]<=elements[j]) break;
+
+      swap(elements[i],elements[ j]);
+      i = j;
     }
   }
 
 public:
   Heap() { }
-
-  void print() {
-    while (elements.size() > 0)
-      cout << remove();
-  }
 
   int size() { return elements.size(); }
 
@@ -80,10 +76,10 @@ public:
   }
 
   T remove() {
-    T val = elements[0];
-    elements[0] = elements[elements.size() - 1];
+    T val = elements[1];
+    elements[1] = elements[elements.size() - 1];
     elements.pop_back();
-    sink(0);
+    sink(1);
     return val;
   }
 };

@@ -19,7 +19,7 @@ string processInput(const string& input) {
 
     std::vector<int> results;
 
-    while (heap->size() > 0){
+    while (heap->size() > 1){
         int el = heap->remove();
         result += to_string(el);
         result += " ";
