@@ -1,9 +1,10 @@
 CXX = g++
 CXXFLAGS = -I./$(PROJECT) -std=c++11
 BIN_DIR = bin
+VALIDATE ?= 0
 
 test: clean build
-	./$(BIN_DIR)/test_suite $(PROJECT)
+	./$(BIN_DIR)/test_suite $(PROJECT) $(if $(filter $(VALIDATE),1),-v)
 
 build: $(BIN_DIR)/suite.o $(BIN_DIR)/processing.o
 	$(CXX) -o $(BIN_DIR)/test_suite $(BIN_DIR)/suite.o $(BIN_DIR)/processing.o

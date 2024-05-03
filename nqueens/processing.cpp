@@ -8,7 +8,7 @@
 using namespace std;
 
 string processInput(const string& input) {
-    NQeensPartial* prob = new NQeensPartial(stoi(input),30);
+    NQeensFull* prob = new NQeensFull(stoi(input));
     string res = "";
 
     prob->solve(0);
