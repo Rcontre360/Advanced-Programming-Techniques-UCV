@@ -29,7 +29,12 @@ bool useValidationFunction(int argc, char* argv[]) {
 }
 
 int main(int argc, char* argv[]) {
-    const string testFolder = "./tests/";
+    if (argc < 2) {
+        cerr << "Usage: " << argv[0] << " <project_directory> [-v|--validate]" << endl;
+        return 1;
+    }
+    string projectFolder = argv[1];
+    string testFolder = projectFolder + "/tests/";
     int testNum = 1;
     string inputFile, expectedFile, line, input, expected;
     bool useValidate = useValidationFunction(argc, argv);
@@ -87,3 +92,4 @@ int main(int argc, char* argv[]) {
 
     return 0;
 }
+
