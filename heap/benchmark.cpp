@@ -20,14 +20,12 @@ void quickSortWrapper(vector<int>& arr) {
 }
 
 void heapSort(vector<int> &arr) {
-    Heap<int> heap;
-    for (int num : arr) {
-        heap.insert(num);
-    } 
+    Heap<int> *heap = new Heap<int>(arr);
     for (int i = 0; i < arr.size(); i++) {
-        arr[i] = heap.head();
-        heap.remove();
+        arr[i] = heap->head();
+        heap->remove();
     }
+    delete heap;
 }
 
 bool validateSorting(const vector<int>& arr){
@@ -57,6 +55,7 @@ double benchmarkSort(Func sortFunc, vector<int>& arr) {
     auto end = high_resolution_clock::now();
 
     if (!validateSorting(arr)){
+        cout << "INVALID SUCCKER" << endl;
         throw std::runtime_error("Not sorted correctly");
     }
     
@@ -70,10 +69,12 @@ void sortAndLog(const string& type,  int size, ofstream& file, ArrayType arrayTy
 
     cout << "done: " << type << "|" << alg << "|" << size << endl;
     file << size << ", " << type << ", " << time << "\n";
+
+    arr.clear();
 }
 
 int main() {
-    vector<int> sizes;  // Example sizes, adjust as needed
+    vector<int> sizes ;  // Example sizes, adjust as needed
     ofstream quickFile("quick_sort_benchmark.csv");
     ofstream heapFile("heap_sort_benchmark.csv");
 

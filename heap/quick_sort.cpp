@@ -1,47 +1,64 @@
+// An iterative implementation of quick sort 
 #include <vector>
 #include <iostream>
 
 using namespace std;
 
+/* This function is same in both iterative and recursive*/
 template <class T>
-int partition(vector<T> &arr,int low,int high)
-{
-  //choose the pivot
-  int pivot=arr[high];
-  //Index of smaller element and Indicate
-  //the right position of pivot found so far
-  int i=(low-1);
-  
-  for(int j=low;j<=high;j++)
-  {
-    //If current element is smaller than the pivot
-    if(arr[j]<pivot)
-    {
-      //Increment index of smaller element
-      i++;
-      swap(arr[i],arr[j]);
-    }
-  }
-  swap(arr[i+1],arr[high]);
-  return (i+1);
-}
+int partition(vector<T> &arr, int l, int h) 
+{ 
+	int x = arr[h]; 
+	int i = (l - 1); 
 
-// The Quicksort function Implement
+	for (int j = l; j <= h - 1; j++) { 
+		if (arr[j] <= x) { 
+			i++; 
+      swap(arr[i], arr[j]); 
+		} 
+	} 
+	swap(arr[i + 1], arr[h]); 
+	return (i + 1); 
+} 
+
+/* A[] --> Array to be sorted, 
+l --> Starting index, 
+h --> Ending index */
 template <class T>
-void quickSort(vector<T> &arr,int low,int high)
-{
-  // when low is less than high
-  if(low<high)
-  {
-    // pi is the partition return index of pivot
-    
-    int pi=partition(arr,low,high);
-    
-    //Recursion Call
-    //smaller element than pivot goes left and
-    //higher element goes right
-    quickSort(arr,low,pi-1);
-    quickSort(arr,pi+1,high);
-  }
-}
- 
+void quickSort(vector<T> &arr, int l, int h) 
+{ 
+	// Create an auxiliary stack 
+	int stack[h - l + 1]; 
+
+	// initialize top of stack 
+	int top = -1; 
+
+	// push initial values of l and h to stack 
+	stack[++top] = l; 
+	stack[++top] = h; 
+
+	// Keep popping from stack while is not empty 
+	while (top >= 0) { 
+		// Pop h and l 
+		h = stack[top--]; 
+		l = stack[top--]; 
+
+		// Set pivot element at its correct position 
+		// in sorted array 
+		int p = partition(arr, l, h); 
+
+		// If there are elements on left side of pivot, 
+		// then push left side to stack 
+		if (p - 1 > l) { 
+			stack[++top] = l; 
+			stack[++top] = p - 1; 
+		} 
+
+		// If there are elements on right side of pivot, 
+		// then push right side to stack 
+		if (p + 1 < h) { 
+			stack[++top] = p + 1; 
+			stack[++top] = h; 
+		} 
+	} 
+} 
