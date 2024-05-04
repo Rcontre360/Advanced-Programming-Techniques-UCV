@@ -31,7 +31,7 @@ public:
   }
 
   ~Heap(){
-    delete elements;
+    elements.clear();
   }
 
   int size() { return elements.size(); }

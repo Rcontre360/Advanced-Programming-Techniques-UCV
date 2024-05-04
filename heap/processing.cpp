@@ -30,7 +30,22 @@ string processInput(const string& input) {
     return result;
 }
 
-bool validate(const string& output) {
-    return false; // No conflicts found
+bool validate(const std::string& output) {
+    std::istringstream iss(output);
+    std::vector<int> numbers;
+    int num;
+
+    while (iss >> num) {
+        numbers.push_back(num);
+    }
+
+    for (int i = 1; i < numbers.size(); ++i) {
+        if (numbers[i-1] >= numbers[i]) {
+            return false; 
+        }
+    }
+
+    return true; // Numbers are in strictly ascending order
 }
+
 
