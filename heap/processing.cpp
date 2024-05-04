@@ -17,13 +17,14 @@ string processInput(const string& input) {
         heap->insert(number);
     }
 
-    std::vector<int> results;
-
-    while (heap->size() > 1){
-        int el = heap->remove();
+    Heap<int>* second = new Heap<int>(*heap);
+    while (second->size() > 1){
+        int el = second->head();
+        second->remove();
         result += to_string(el);
         result += " ";
     }
+
 
     result.pop_back();
     return result;
