@@ -87,7 +87,7 @@ int main() {
     }
 
     for (int size : sizes) {
-        thread threads[6];
+        thread threads[9];
 
         threads[0] = thread(sortAndLog, "Ascending", size, ref(quickFile), ASC, quickSortWrapper, "quick_sort");
         threads[1] = thread(sortAndLog, "Descending", size, ref(quickFile), DESC, quickSortWrapper,"quick_sort");
@@ -96,6 +96,10 @@ int main() {
         threads[3] = thread(sortAndLog, "Ascending", size, ref(heapFile), ASC, heapSort,"heap_sort");
         threads[4] = thread(sortAndLog, "Descending", size, ref(heapFile), DESC, heapSort,"heap_sort");
         threads[5] = thread(sortAndLog, "Random", size, ref(heapFile), RAND, heapSort,"heap_sort");
+
+        threads[6] = thread(sortAndLog, "Ascending", size, ref(quickFile), ASC, quickSortWrapper, "quick_sort");
+        threads[7] = thread(sortAndLog, "Descending", size, ref(quickFile), DESC, quickSortWrapper,"quick_sort");
+        threads[8] = thread(sortAndLog, "Random", size, ref(quickFile), RAND, quickSortWrapper,"quick_sort");
 
         for (auto& th : threads) {
             th.join();

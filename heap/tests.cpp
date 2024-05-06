@@ -2,6 +2,7 @@
 #include "heap.cpp"
 #include <vector>
 #include <functional>
+#include <random>
 #include <iostream>
 
 using namespace std;
@@ -12,6 +13,15 @@ struct Test {
 
     Test(function<bool()> func, string name) : func(func), name(name) {}
 };
+
+Point randPoint() {
+    random_device rd;  // Obtain a random number from hardware
+    mt19937 eng(rd()); // Seed the generator
+    uniform_real_distribution<> distr(-100.0, 100.0);  // Define the range as -100.0 to 100.0
+
+    Point p(distr(eng),distr(eng));
+    return p;
+}
 
 bool testPointComparison() {
     Point p1 = {3, 4};  // Distance from origin = 5
@@ -33,32 +43,29 @@ bool testHeapInsert() {
     heap.insert(8);
     heap.insert(2);
 
-    // After insertion, the smallest element should be at the head
-    return heap.head() == 2;
+    return heap.head() == 10;
 }
 
 bool testHeapRemove() {
     Heap<int> heap({10, 5, 3, 8, 2});
-    heap.remove();  // Should remove the root which is 2
+    heap.remove();  
 
-    // New root should be the next smallest element, which is 3
-    return heap.head() == 3;
+    return heap.head() == 8;
 }
 
 bool testHeapSink() {
-    vector<int> elements = {0, 15, 3, 8, 10, 2};
+    vector<int> elements = {0, 5, 3, 8, 10, 15};
     int n = elements.size();
-    Heap<int>::sink(elements, 1, n);  
+    Heap<int>::sink(elements, 2, n);  
 
-    return elements[n - 1] == 15;
+    return elements[n - 1] == 3;
 }
 
 bool testHeapify() {
-    vector<int> elements = {5, 3, 8, 10, 2};
-    Heap<int>::heapify(elements);  // Should organize into a heap
+    vector<int> elements = {0,9, 5, 8, 10, 2};
+    Heap<int>::heapify(elements);  
 
-    // After heapify, the smallest element should come to the start of the array (index 1 in 1-based index)
-    return elements[1] == 2;
+    return elements[1] == 10;
 }
 
 bool testHeapSort() {
@@ -67,8 +74,20 @@ bool testHeapSort() {
 
     // Check if the elements are sorted after the sort operation
     for (int i = 2; i < elements.size(); i++) {
-        if (elements[i] >= elements[i-1]) {
+        if (elements[i - 1] > elements[i]) {
             return false;  // Not sorted correctly
+        }
+    }
+    return true;
+}
+
+bool testHeapSortPoint() {
+    vector<Point> elements = {Point(0,0), randPoint(), randPoint(), randPoint(), randPoint(), randPoint()};  // Include 0 to align indices as 1-based
+    Heap<Point>::sort(elements);
+
+    for (int i = 2; i < elements.size(); i++) {
+        if (elements[i-1] > elements[i]) {
+            return false;  
         }
     }
     return true;
@@ -88,6 +107,7 @@ int main() {
         Test(testHeapSink, "Test heap sink"),
         Test(testHeapify, "Test heapify"),
         Test(testHeapSort, "Test heap sort"),
+        Test(testHeapSortPoint, "Test heap sort on points"),
     };
 
     bool allTestsPassed = true;
