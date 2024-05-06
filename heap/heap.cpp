@@ -9,13 +9,6 @@ template <class T> class Heap {
 private:
   vector<T> elements = vector<T>(1);
 
-  void swim(int i) {
-    while (i > 1 && elements[ i / 2 ] > elements[i]){
-      std::swap(elements[i], elements[i/2]);
-      i = i/2;
-    }
-  }
-
 public:
   Heap() { }
 
@@ -32,6 +25,41 @@ public:
 
   ~Heap(){
     elements.clear();
+  }
+
+  static void swim(vector<T> &arr, int i) {
+    while (i > 1 && arr[ i / 2 ] > arr[i]){
+      std::swap(arr[i], arr[i/2]);
+      i = i/2;
+    }
+  }
+
+  static void sink(vector<T> &arr,int i, int n){
+    while (2*i <= n){
+      int j = 2*i;
+
+      if (j < n && arr[j]>arr[j+1]) j++;
+      if (arr[i]<=arr[j]) break;
+
+      swap(arr[i],arr[j]);
+      i = j;
+    }
+  }
+
+  static void heapify(vector<T> &arr){
+    for (int i = arr.size()/2; i>0; i--)
+      Heap::sink(arr, i, arr.size());
+  }
+
+  //heap-sort
+  static void sort(vector<T> &arr) {
+    int n = arr.size();
+    Heap::heapify(arr);
+
+    for(int i = n; i > 1; i--) {
+      swap(arr[1], arr[i]);
+      Heap::sink(arr,1,--n);
+    }
   }
 
   int size() { return elements.size(); }
@@ -55,22 +83,12 @@ public:
     sink(1);
   }
 
-  void heapify(){
-    for (int i = elements.size()/2; i>0; i--)
-      sink( i);
+  void sink(int i) {
+    Heap::sink(this->elements, i, this->elements.size());
   }
 
-  void sink(int i) {
-    int n = elements.size();
-    while (2*i <= n){
-      int j = 2*i;
-
-      if (j < n && elements[j]>elements[j+1]) j++;
-      if (elements[i]<=elements[j]) break;
-
-      swap(elements[i],elements[ j]);
-      i = j;
-    }
+  void swim(int i) {
+    Heap::swim(this->elements,i);
   }
 
 };
