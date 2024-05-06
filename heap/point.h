@@ -41,10 +41,10 @@ struct Point{
 
 };
 
-//ostream& operator<<(ostream& os, const Point& p) {
-    //os << "Point(" << p.x << ", " << p.y << ")";
-    //return os;
-//}
+ostream& operator<<(ostream& os, const Point& p) {
+    os << "Point(" << p.x << ", " << p.y << ")";
+    return os;
+}
 
 #endif
 

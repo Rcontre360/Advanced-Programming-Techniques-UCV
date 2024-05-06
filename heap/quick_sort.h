@@ -4,7 +4,9 @@
 
 using namespace std;
 
-/* This function is same in both iterative and recursive*/
+#ifndef QUICK
+#define QUICK
+
 template <class T>
 int partition(vector<T> &arr, int l, int h) 
 { 
@@ -62,3 +64,5 @@ void quickSort(vector<T> &arr, int l, int h)
 		} 
 	} 
 } 
+
+#endif

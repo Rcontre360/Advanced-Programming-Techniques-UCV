@@ -1,6 +1,6 @@
-#include "quick_sort.cpp"  
-#include "point.cpp"  
-#include "heap.cpp"  
+#include "quick_sort.h"  
+#include "point.h"  
+#include "heap.h"  
 #include <chrono>
 #include <fstream>
 #include <random>
@@ -14,16 +14,19 @@ using namespace chrono;
 
 enum ArrayType { ASC, DESC, RAND };
 
-void quickSortWrapper(vector<int>& arr) {
+template <class T>
+void quickSortWrapper(vector<T>& arr) {
     quickSort(arr, 0, arr.size() - 1);
 }
 
-void stdSortWrapper(vector<int>& arr) {
+template <class T>
+void stdSortWrapper(vector<T>& arr) {
     sort(arr.begin() , arr.end());
 }
 
-void heapSortWrapper(vector<int> &arr) {
-    Heap<int>::sort(arr);
+template <class T>
+void heapSortWrapper(vector<T> &arr) {
+    Heap<T>::sort(arr);
 }
 
 bool validateSorting(vector<Point>& arr){
@@ -74,7 +77,7 @@ double benchmarkSort(Func sortFunc, vector<Point>& arr) {
     return elapsed.count();
 }
 
-void sortAndLog(const string& type,  int size, ofstream& file, ArrayType arrayType, void(*sortFunc)(vector<Point>&),const string& alg) {
+void sortAndLog(const string& type, int size, ofstream& file, ArrayType arrayType, void(*sortFunc)(vector<Point>&), const string& alg){
     vector<Point> arr = generateArray(size, arrayType);
     double time = benchmarkSort(sortFunc, arr);
 
@@ -85,7 +88,7 @@ void sortAndLog(const string& type,  int size, ofstream& file, ArrayType arrayTy
 }
 
 int main() {
-    vector<int> sizes  = {10000};  // Example sizes, adjust as needed
+    vector<int> sizes;  // Example sizes, adjust as needed
     ofstream quickFile("./benchmarks/quick_sort.csv");
     ofstream heapFile("./benchmarks/heap.csv");
     ofstream stdSortFile("./benchmarks/std.csv");
@@ -94,24 +97,46 @@ int main() {
     heapFile << "Size, Type, Time (μs)\n";
     stdSortFile << "Size, Type, Time (μs)\n";
 
-    //for (int i=10000; i <= 50000; i+=10000){
-        //sizes.push_back(i);
-    //}
+    for (int i=10000; i <= 500000; i+=10000){
+        sizes.push_back(i);
+    }
 
     for (int size : sizes) {
         thread threads[9];
 
-        threads[0] = thread(sortAndLog, "Ascending", size, ref(quickFile), ASC, quickSortWrapper, "quick_sort");
-        threads[1] = thread(sortAndLog, "Descending", size, ref(quickFile), DESC, quickSortWrapper,"quick_sort");
-        threads[2] = thread(sortAndLog, "Random", size, ref(quickFile), RAND, quickSortWrapper,"quick_sort");
+        //quick sort
+        threads[0] =  std::thread([=, &quickFile]() {
+            sortAndLog("Ascending", size, ref(quickFile), ASC, quickSortWrapper, "quick_sort");
+        });
+        threads[1] = std::thread([=, &quickFile]() {
+            sortAndLog("Descending", size, quickFile, DESC, quickSortWrapper, "quick_sort");
+        });
+        threads[2] = std::thread([=, &quickFile]() {
+            sortAndLog("Random", size, quickFile, RAND, quickSortWrapper, "quick_sort");
+        });
 
-        threads[3] = thread(sortAndLog, "Ascending", size, ref(heapFile), ASC, heapSortWrapper,"heap_sort");
-        threads[4] = thread(sortAndLog, "Descending", size, ref(heapFile), DESC, heapSortWrapper,"heap_sort");
-        threads[5] = thread(sortAndLog, "Random", size, ref(heapFile), RAND, heapSortWrapper,"heap_sort");
+        //heap
+        threads[3] = std::thread([=, &heapFile]() {
+            sortAndLog("Ascending", size, heapFile, ASC, heapSortWrapper, "heap_sort");
+        });
+        threads[4] = std::thread([=, &heapFile]() {
+            sortAndLog("Descending", size, heapFile, DESC, heapSortWrapper, "heap_sort");
+        });
+        threads[5] = std::thread([=, &heapFile]() {
+            sortAndLog("Random", size, heapFile, RAND, heapSortWrapper, "heap_sort");
+        });
 
-        threads[6] = thread(sortAndLog, "Ascending", size, ref(stdSortFile), ASC, stdSortWrapper, "std_sort");
-        threads[7] = thread(sortAndLog, "Descending", size, ref(stdSortFile), DESC, stdSortWrapper,"std_sort");
-        threads[8] = thread(sortAndLog, "Random", size, ref(stdSortFile), RAND, stdSortWrapper,"std_sort");
+        //std sort
+        threads[6] = std::thread([=, &stdSortFile]() {
+            sortAndLog("Ascending", size, stdSortFile, ASC, stdSortWrapper, "std_sort");
+        });
+        threads[7] = std::thread([=, &stdSortFile]() {
+            sortAndLog("Descending", size, stdSortFile, DESC, stdSortWrapper, "std_sort");
+        });
+        threads[8] = std::thread([=, &stdSortFile]() {
+            sortAndLog("Random", size, stdSortFile, RAND, stdSortWrapper, "std_sort");
+        });
+
 
         for (auto& th : threads) {
             th.join();
