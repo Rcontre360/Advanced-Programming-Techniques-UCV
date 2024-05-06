@@ -26,7 +26,7 @@ void heapSortWrapper(vector<int> &arr) {
     Heap<int>::sort(arr);
 }
 
-bool validateSorting(const vector<int>& arr){
+bool validateSorting(vector<Point>& arr){
     int n = arr.size();
 
     //heap sort omits arr[0]
@@ -39,9 +39,14 @@ bool validateSorting(const vector<int>& arr){
     return true; 
 }
 
-vector<int> generateArray(int n, ArrayType type) {
-    vector<int> arr(n);
-    iota(arr.begin(), arr.end(), 1); 
+vector<Point> generateArray(int n, ArrayType type) {
+    vector<Point> arr;
+    arr.reserve(n);
+
+    // Fill the vector with Points incrementing by 1.0 for simplicity
+    for (int i = 0; i < n; ++i) {
+        arr.emplace_back(static_cast<float>(i + 1), static_cast<float>(i + 1));
+    }
 
     if (type == DESC) {
         reverse(arr.begin(), arr.end());
@@ -50,11 +55,12 @@ vector<int> generateArray(int n, ArrayType type) {
         mt19937 g(rd());
         shuffle(arr.begin(), arr.end(), g);
     }
+
     return arr;
 }
 
 template <typename Func>
-double benchmarkSort(Func sortFunc, vector<int>& arr) {
+double benchmarkSort(Func sortFunc, vector<Point>& arr) {
     auto start = high_resolution_clock::now();
     sortFunc(arr);
     auto end = high_resolution_clock::now();
@@ -68,8 +74,8 @@ double benchmarkSort(Func sortFunc, vector<int>& arr) {
     return elapsed.count();
 }
 
-void sortAndLog(const string& type,  int size, ofstream& file, ArrayType arrayType, void(*sortFunc)(vector<int>&),const string& alg) {
-    vector<int> arr = generateArray(size, arrayType);
+void sortAndLog(const string& type,  int size, ofstream& file, ArrayType arrayType, void(*sortFunc)(vector<Point>&),const string& alg) {
+    vector<Point> arr = generateArray(size, arrayType);
     double time = benchmarkSort(sortFunc, arr);
 
     cout << "done: " << type << "|" << alg << "|" << size << endl;

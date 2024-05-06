@@ -8,7 +8,7 @@ using namespace std;
 template <class T>
 int partition(vector<T> &arr, int l, int h) 
 { 
-	int x = arr[h]; 
+	T x = arr[h]; 
 	int i = (l - 1); 
 
 	for (int j = l; j <= h - 1; j++) { 
