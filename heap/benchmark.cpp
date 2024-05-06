@@ -1,5 +1,6 @@
 #include "quick_sort.cpp"  // Ensure this has correct function signature
 #include "processing.cpp"  // Ensure this has validate function
+#include "point.cpp"  // Ensure this has validate function
 #include <chrono>
 #include <fstream>
 #include <random>
