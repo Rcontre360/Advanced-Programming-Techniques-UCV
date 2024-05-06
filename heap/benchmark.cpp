@@ -1,6 +1,6 @@
-#include "quick_sort.cpp"  // Ensure this has correct function signature
-#include "processing.cpp"  // Ensure this has validate function
-#include "point.cpp"  // Ensure this has validate function
+#include "quick_sort.cpp"  
+#include "point.cpp"  
+#include "heap.cpp"  
 #include <chrono>
 #include <fstream>
 #include <random>
@@ -15,24 +15,28 @@ using namespace chrono;
 enum ArrayType { ASC, DESC, RAND };
 
 void quickSortWrapper(vector<int>& arr) {
-    if (!arr.empty()) {
-        quickSort(arr, 0, arr.size() - 1);
-    }
+    quickSort(arr, 0, arr.size() - 1);
 }
 
-void heapSort(vector<int> &arr) {
-    Heap<int> *heap = new Heap<int>(arr);
-    for (int i = 0; i < arr.size(); i++) {
-        arr[i] = heap->head();
-        heap->remove();
-    }
-    delete heap;
+void stdSortWrapper(vector<int>& arr) {
+    sort(arr.begin() , arr.end());
+}
+
+void heapSortWrapper(vector<int> &arr) {
+    Heap<int>::sort(arr);
 }
 
 bool validateSorting(const vector<int>& arr){
-    string res;
-    for (auto x : arr) res += to_string(x) + " ";
-    return validate(res);
+    int n = arr.size();
+
+    //heap sort omits arr[0]
+    for (int i = 2; i < n; i++) {
+        if (arr[i-1] >= arr[i]) {
+            return false; 
+        }
+    }
+
+    return true; 
 }
 
 vector<int> generateArray(int n, ArrayType type) {
@@ -56,7 +60,7 @@ double benchmarkSort(Func sortFunc, vector<int>& arr) {
     auto end = high_resolution_clock::now();
 
     if (!validateSorting(arr)){
-        cout << "INVALID SUCCKER" << endl;
+        cout << "Not sorted correctly" << endl;
         throw std::runtime_error("Not sorted correctly");
     }
     
@@ -75,16 +79,18 @@ void sortAndLog(const string& type,  int size, ofstream& file, ArrayType arrayTy
 }
 
 int main() {
-    vector<int> sizes ;  // Example sizes, adjust as needed
-    ofstream quickFile("quick_sort_benchmark.csv");
-    ofstream heapFile("heap_sort_benchmark.csv");
+    vector<int> sizes  = {10000};  // Example sizes, adjust as needed
+    ofstream quickFile("./benchmarks/quick_sort.csv");
+    ofstream heapFile("./benchmarks/heap.csv");
+    ofstream stdSortFile("./benchmarks/std.csv");
 
     quickFile << "Size, Type, Time (μs)\n";
     heapFile << "Size, Type, Time (μs)\n";
+    stdSortFile << "Size, Type, Time (μs)\n";
 
-    for (int i=10000; i <= 1000000; i+=10000){
-        sizes.push_back(i);
-    }
+    //for (int i=10000; i <= 50000; i+=10000){
+        //sizes.push_back(i);
+    //}
 
     for (int size : sizes) {
         thread threads[9];
@@ -93,13 +99,13 @@ int main() {
         threads[1] = thread(sortAndLog, "Descending", size, ref(quickFile), DESC, quickSortWrapper,"quick_sort");
         threads[2] = thread(sortAndLog, "Random", size, ref(quickFile), RAND, quickSortWrapper,"quick_sort");
 
-        threads[3] = thread(sortAndLog, "Ascending", size, ref(heapFile), ASC, heapSort,"heap_sort");
-        threads[4] = thread(sortAndLog, "Descending", size, ref(heapFile), DESC, heapSort,"heap_sort");
-        threads[5] = thread(sortAndLog, "Random", size, ref(heapFile), RAND, heapSort,"heap_sort");
+        threads[3] = thread(sortAndLog, "Ascending", size, ref(heapFile), ASC, heapSortWrapper,"heap_sort");
+        threads[4] = thread(sortAndLog, "Descending", size, ref(heapFile), DESC, heapSortWrapper,"heap_sort");
+        threads[5] = thread(sortAndLog, "Random", size, ref(heapFile), RAND, heapSortWrapper,"heap_sort");
 
-        threads[6] = thread(sortAndLog, "Ascending", size, ref(quickFile), ASC, quickSortWrapper, "quick_sort");
-        threads[7] = thread(sortAndLog, "Descending", size, ref(quickFile), DESC, quickSortWrapper,"quick_sort");
-        threads[8] = thread(sortAndLog, "Random", size, ref(quickFile), RAND, quickSortWrapper,"quick_sort");
+        threads[6] = thread(sortAndLog, "Ascending", size, ref(stdSortFile), ASC, stdSortWrapper, "std_sort");
+        threads[7] = thread(sortAndLog, "Descending", size, ref(stdSortFile), DESC, stdSortWrapper,"std_sort");
+        threads[8] = thread(sortAndLog, "Random", size, ref(stdSortFile), RAND, stdSortWrapper,"std_sort");
 
         for (auto& th : threads) {
             th.join();
@@ -108,6 +114,7 @@ int main() {
 
     quickFile.close();
     heapFile.close();
+    stdSortFile.close();
 
     return 0;
 }

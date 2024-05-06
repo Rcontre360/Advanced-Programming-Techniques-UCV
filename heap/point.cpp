@@ -38,7 +38,13 @@ struct Point{
   bool operator>=(const Point& other) const {
     return (*this) > other || (*this) == other;
   }
+
 };
+
+//ostream& operator<<(ostream& os, const Point& p) {
+    //os << "Point(" << p.x << ", " << p.y << ")";
+    //return os;
+//}
 
 #endif
 

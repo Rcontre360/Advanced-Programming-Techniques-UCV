@@ -5,7 +5,7 @@ SRC_DIR = .
 INCLUDE_DIR = include
 
 # Define your source files for the main application
-SOURCES = $(SRC_DIR)/benchmark.cpp $(SRC_DIR)/heap.cpp $(SRC_DIR)/quick_sort.cpp
+SOURCES = $(SRC_DIR)/benchmark.cpp $(SRC_DIR)/heap.cpp $(SRC_DIR)/quick_sort.cpp $(SRC_DIR)/point.cpp
 # Define the source file for testing
 TEST_SRC = $(SRC_DIR)/tests.cpp
 

@@ -54,10 +54,10 @@ public:
 
   //heap-sort
   static void sort(vector<T> &arr) {
-    int n = arr.size();
+    int n = arr.size()-1;
     Heap::heapify(arr);
 
-    for(int i = n; i > 1; i--) {
+    for(int i = n; i >= 1; i--) {
       swap(arr[1], arr[i]);
       Heap::sink(arr,1,--n);
     }
