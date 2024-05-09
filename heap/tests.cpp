@@ -1,5 +1,5 @@
-#include "point.cpp"
-#include "heap.cpp"
+#include "point.h"
+#include "heap.h"
 #include <vector>
 #include <functional>
 #include <random>
@@ -106,7 +106,7 @@ int main() {
         Test(testHeapSink, "Test heap sink"),
         Test(testHeapify, "Test heapify"),
         Test(testHeapSort, "Test heap sort"),
-        //Test(testHeapSortPoint, "Test heap sort on points"),
+        Test(testHeapSortPoint, "Test heap sort on points"),
     };
 
     bool allTestsPassed = true;
