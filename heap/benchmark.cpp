@@ -97,7 +97,10 @@ int main() {
     heapFile << "Size, Type, Time (μs)\n";
     stdSortFile << "Size, Type, Time (μs)\n";
 
-    for (int i=10000; i <= 500000; i+=10000){
+    for (int i=1000; i <= 10000; i+=1000){
+        sizes.push_back(i);
+    }
+    for (int i=20000; i <= 100000; i+=10000){
         sizes.push_back(i);
     }
 
