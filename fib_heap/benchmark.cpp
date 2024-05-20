@@ -11,8 +11,6 @@
 using namespace std;
 using namespace chrono;
 
-enum Operation { INSERT, GET_MINIMUM, DELETE_MINIMUM, REDUCE_KEY };
-
 IHeap<int>* initEmptyFib(vector<int> &elems){
     FibHeap* fibHeap = new FibHeap();
     return fibHeap;
@@ -87,6 +85,7 @@ double benchmark(Setup setup,Func operation, vector<int>& arr) {
 }
 
 void benchmarkAndLog(
+    const string& heap,
     const string& type,
     int size,
     ofstream& file,
@@ -97,30 +96,27 @@ void benchmarkAndLog(
     double time = benchmark(setup,operation, arr);
 
     cout << "done: " << type << "|" << size << endl;
-    file << size << "," << type << "," << time << "\n";
+    file << heap << type << "," << size << "," << time << "\n";
 }
 
 int main() {
-    vector<int> sizes = {10000};  // Example sizes, adjust as needed
+    vector<int> sizes = {100000};  // Example sizes, adjust as needed
     ofstream heapFile("./benchmarks/heap.csv");
 
-    heapFile << "Times,Operation,Time (μs)\n";
+    heapFile << "Heap,Operation,Times,Time (μs)\n";
 
-    //for (int i=1000; i <= 10000; i+=1000){
-        //sizes.push_back(i);
-    //}
     for (int size : sizes) {
         thread threads[3];
 
         //heap
         threads[0] = std::thread([=, &heapFile]() {
-            benchmarkAndLog("FibHeap", size, heapFile,heapAccessMin,initFullFib);
+            benchmarkAndLog("FibHeap", "AccessMin", size, heapFile, heapAccessMin,initFullFib);
         });
         threads[1] = std::thread([=, &heapFile]() {
-            benchmarkAndLog("FibHeap", size, heapFile, heapRemoveMin, initFullFib);
+            benchmarkAndLog("FibHeap","RemoveMin", size, heapFile, heapRemoveMin, initFullFib);
         });
         threads[2] = std::thread([=, &heapFile]() {
-            benchmarkAndLog("FibHeap", size, heapFile, heapInsert, initFullFib);
+            benchmarkAndLog("FibHeap", "Insert", size, heapFile, heapInsert, initFullFib);
         });
 
         for (auto& th : threads) {

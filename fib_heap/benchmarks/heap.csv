@@ -1,1 +1,4 @@
-Size, Type, Time (μs)
+Heap,Operation,Times,Time (μs)
+FibHeapAccessMin,100000,586.628
+FibHeapInsert,100000,5615.75
+FibHeapRemoveMin,100000,158028
