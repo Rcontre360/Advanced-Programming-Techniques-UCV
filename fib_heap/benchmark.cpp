@@ -100,24 +100,42 @@ void benchmarkAndLog(
 }
 
 int main() {
-    vector<int> sizes = {100000};  // Example sizes, adjust as needed
+    vector<int> sizes;  // Example sizes, adjust as needed
     ofstream heapFile("./benchmarks/heap.csv");
+    ofstream fibFile("./benchmarks/fib.csv");
 
     heapFile << "Heap,Operation,Times,Time (μs)\n";
+    fibFile << "Heap,Operation,Times,Time (μs)\n";
+
+    for (int i=10000; i <= 1000000; i+=10000){
+        sizes.push_back(i);
+    }
 
     for (int size : sizes) {
-        thread threads[3];
+        thread threads[6];
+
+        //fib heap
+        threads[0] = std::thread([=, &fibFile]() {
+            benchmarkAndLog("FibHeap", "AccessMin", size, fibFile, heapAccessMin,initFullFib);
+        });
+        threads[1] = std::thread([=, &fibFile]() {
+            benchmarkAndLog("FibHeap","RemoveMin", size, fibFile, heapRemoveMin, initFullFib);
+        });
+        threads[2] = std::thread([=, &fibFile]() {
+            benchmarkAndLog("FibHeap", "Insert", size, fibFile, heapInsert, initEmptyFib);
+        });
 
         //heap
-        threads[0] = std::thread([=, &heapFile]() {
-            benchmarkAndLog("FibHeap", "AccessMin", size, heapFile, heapAccessMin,initFullFib);
+        threads[3] = std::thread([=, &heapFile]() {
+            benchmarkAndLog("Heap", "AccessMin", size, heapFile, heapAccessMin,initFullHeap);
         });
-        threads[1] = std::thread([=, &heapFile]() {
-            benchmarkAndLog("FibHeap","RemoveMin", size, heapFile, heapRemoveMin, initFullFib);
+        threads[4] = std::thread([=, &heapFile]() {
+            benchmarkAndLog("Heap","RemoveMin", size, heapFile, heapRemoveMin, initFullHeap);
         });
-        threads[2] = std::thread([=, &heapFile]() {
-            benchmarkAndLog("FibHeap", "Insert", size, heapFile, heapInsert, initFullFib);
+        threads[5] = std::thread([=, &heapFile]() {
+            benchmarkAndLog("Heap", "Insert", size, heapFile, heapInsert, initEmptyHeap);
         });
+
 
         for (auto& th : threads) {
             th.join();
@@ -125,6 +143,7 @@ int main() {
     }
 
     heapFile.close();
+    fibFile.close();
 
     return 0;
 }
