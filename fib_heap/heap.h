@@ -105,6 +105,11 @@ public:
     return el;
   }
 
+  void decreaseKey(int ind, T val){
+    elements[ind] = val;
+    swim(ind);
+  }
+
 };
 
 #endif

@@ -7,11 +7,11 @@ INCLUDE_DIR = include
 # Define your source files for the main application
 SOURCES = $(SRC_DIR)/benchmark.cpp 
 # Define the source file for testing
-TEST_SRC = $(SRC_DIR)/fib_test.cpp
+TEST_SRC = $(SRC_DIR)/tests.cpp
 
 # Define the executables
 EXECUTABLE = $(BIN_DIR)/benchmark
-TEST_EXECUTABLE = $(BIN_DIR)/fib_test.cpp
+TEST_EXECUTABLE = $(BIN_DIR)/tests.cpp
 
 # Default target
 all: benchmark test
@@ -31,7 +31,7 @@ benchmark: clean $(EXECUTABLE)
 	./$(EXECUTABLE)
 
 # Target to compile and run tests
-test: $(TEST_EXECUTABLE)
+test: clean $(TEST_EXECUTABLE)
 	./$(TEST_EXECUTABLE)
 
 run: benchmark

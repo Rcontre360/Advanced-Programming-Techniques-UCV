@@ -44,6 +44,12 @@ public:
 		_insert_node(newNode);
 	}
 
+	FibHeapNode* insertRet(const int &val){
+		FibHeapNode* newNode = _create_node(val);
+		_insert_node(newNode);
+
+		return newNode;
+	}
 
 	/* Merge current heap with another*/  	
 	void merge(FibHeap &another){

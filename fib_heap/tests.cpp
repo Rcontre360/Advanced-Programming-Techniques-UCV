@@ -1,8 +1,9 @@
-#include "point.h"
 #include "heap.h"
+#include "fibonacci/FibHeap.h"  
 #include <vector>
 #include <functional>
 #include <random>
+#include <algorithm>
 #include <iostream>
 
 using namespace std;
@@ -14,25 +15,12 @@ struct Test {
     Test(function<bool()> func, string name) : func(func), name(name) {}
 };
 
-Point randPoint() {
-    random_device rd;  // Obtain a random number from hardware
-    mt19937 eng(rd()); // Seed the generator
-    uniform_real_distribution<> distr(-100.0, 100.0);  // Define the range as -100.0 to 100.0
+int randInt(int min, int max) {
+    random_device rd;  
+    mt19937 eng(rd());
+    uniform_int_distribution<> distr(min, max);  
 
-    Point p(distr(eng),distr(eng));
-    return p;
-}
-
-bool testPointComparison() {
-    Point p1 = {3, 4};  // Distance from origin = 5
-    Point p2 = {5, 12}; // Distance from origin = 13
-    return p1 < p2;  // Should return true
-}
-
-bool testEquality() {
-    Point p1 = {6, 8};  // Distance from origin = 10
-    Point p2 = {6, 8};  // Same as p1
-    return !(p1 < p2) && !(p2 < p1);  // Expect neither to be less than the other
+    return distr(eng);
 }
 
 bool testHeapInsert() {
@@ -43,33 +31,32 @@ bool testHeapInsert() {
     heap.insert(8);
     heap.insert(2);
 
-    return heap.head() == 10;
+    return heap.head() == 10; 
 }
 
 bool testHeapRemove() {
     Heap<int> heap({10, 5, 3, 8, 2});
-    heap.remove();  
+    heap.remove();
 
-    return heap.head() == 8;
+    return heap.head() == 8;  
 }
 
 bool testHeapSink() {
-    vector<int> elements = {0, 5, 3, 8, 10, 15};
-    int n = elements.size();
-    Heap<int>::sink(elements, 2, n);  
+    vector<int> elements = {-1, 5, 3, 8, 15};
+    Heap<int>::sink(elements, 1, elements.size()); 
 
-    return elements[n - 1] == 3;
+    return elements[elements.size() - 1] == 15;  
 }
 
 bool testHeapify() {
-    vector<int> elements = {0,9, 5, 8, 10, 2};
+    vector<int> elements = {-1, 5, 8, 10, 2};
     Heap<int>::heapify(elements);  
 
-    return elements[1] == 10;
+    return elements[1] == 10;  
 }
 
 bool testHeapSort() {
-    vector<int> elements = {0, 5, 3, 8, 10, 2};  // Include 0 to align indices as 1-based
+    vector<int> elements = {-1, 3, 8, 10, 2};  
     Heap<int>::sort(elements);
 
     for (int i = 2; i < elements.size(); i++) {
@@ -80,33 +67,92 @@ bool testHeapSort() {
     return true;
 }
 
-bool testHeapSortPoint() {
-    vector<Point> elements = {Point(0,0), randPoint(), randPoint(), randPoint(), randPoint(), randPoint()};  // Include 0 to align indices as 1-based
-    Heap<Point>::sort(elements);
+bool testFibHeapInsert() {
+    vector<int> elements = {-1, 3, 8, 10, 2, 14};  
+    FibHeap* fibHeap = new FibHeap();
 
-    for (int i = 2; i < elements.size(); i++) {
-        if (elements[i-1] > elements[i]) {
-            return false;  
+    for (auto x : elements){
+        fibHeap->insert(x);
+    }
+
+    sort(elements.begin(), elements.end());
+
+    for (auto x : elements) {
+        if (x != fibHeap->getMinimum()){
+            return false;
         }
+        fibHeap->removeMinimum();
     }
     return true;
 }
 
-// Colored output
+bool testFibHeapGetMin() {
+    vector<int> elements = {87, 24, 63, 15, 42, 55, 91, 3, 68, 30};  
+    FibHeap* fibHeap = new FibHeap();
+
+    for (auto x : elements){
+        fibHeap->insert(x);
+    }
+
+    return fibHeap->getMinimum() == 3;
+}
+
+bool testFibHeapRemoveMin() {
+    vector<int> elements = {87, 24, 63, 15, 42, 55, 91, 3, 68, 30};  
+    FibHeap* fibHeap = new FibHeap();
+
+    for (auto x : elements){
+        fibHeap->insert(x);
+    }
+
+    fibHeap -> removeMinimum();
+    fibHeap -> removeMinimum();
+
+    return fibHeap->getMinimum() == 24;
+}
+
+bool testFibHeapUnion() {
+    vector<int> first = {87, 24, 63, 15, 42, 55};  
+    vector<int> second = {-1, 3, 8, 10, 2, 14};  
+    vector<int> all(first);  
+    FibHeap* firstH = new FibHeap();
+    FibHeap* secondH = new FibHeap();
+
+    for (int i=0;i < first.size(); i++){
+        firstH->insert(first[i]);
+        secondH->insert(second[i]);
+    }
+
+    all.insert(all.end(),second.begin(),second.end());
+    sort(all.begin(),all.end());
+
+    firstH -> merge(*secondH);
+
+    for (auto x : all) {
+        if (x != firstH->getMinimum()){
+            return false;
+        }
+        firstH->removeMinimum();
+    }
+
+    return true;
+}
+
 const string RED = "\033[1;31m";
 const string GREEN = "\033[1;32m";
 const string RESET = "\033[0m";
 
 int main() {
     vector<Test> tests = {
-        Test(testPointComparison, "Point Distance Comparison Test"),
-        Test(testEquality, "Point Equality Test"),
-        Test(testHeapInsert, "Test heap insert"),
-        Test(testHeapRemove, "Test heap remove"),
-        Test(testHeapSink, "Test heap sink"),
-        Test(testHeapify, "Test heapify"),
-        Test(testHeapSort, "Test heap sort"),
-        Test(testHeapSortPoint, "Test heap sort on points"),
+        Test(testHeapInsert, "Heap: insert"),
+        Test(testHeapRemove, "Heap: remove"),
+        Test(testHeapSink, "Heap: sink"),
+        Test(testHeapify, "Heap: heapify"),
+        Test(testHeapSort, "Heap: sort"),
+        Test(testFibHeapInsert, "FibHeap: insert"),
+        Test(testFibHeapGetMin, "FibHeap: get min"),
+        Test(testFibHeapRemoveMin, "FibHeap: remove min"),
+        Test(testFibHeapUnion, "FibHeap: union"),
     };
 
     bool allTestsPassed = true;
@@ -123,6 +169,6 @@ int main() {
     cout << (allTestsPassed ? GREEN : RED) << "All tests " 
          << (allTestsPassed ? "passed!" : "failed.") << RESET << endl;
 
-    return !allTestsPassed;  // Return error code if any test fails
+    return !allTestsPassed;  
 }
 
