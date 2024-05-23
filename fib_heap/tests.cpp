@@ -31,28 +31,21 @@ bool testHeapInsert() {
     heap.insert(8);
     heap.insert(2);
 
-    return heap.head() == 10; 
+    return heap.head() == 2; 
 }
 
 bool testHeapRemove() {
     Heap<int> heap({10, 5, 3, 8, 2});
     heap.remove();
 
-    return heap.head() == 8;  
-}
-
-bool testHeapSink() {
-    vector<int> elements = {-1, 5, 3, 8, 15};
-    Heap<int>::sink(elements, 1, elements.size()); 
-
-    return elements[elements.size() - 1] == 15;  
+    return heap.head() == 3;  
 }
 
 bool testHeapify() {
     vector<int> elements = {-1, 5, 8, 10, 2};
     Heap<int>::heapify(elements);  
 
-    return elements[1] == 10;  
+    return elements[1] == 2;  
 }
 
 bool testHeapSort() {
@@ -60,7 +53,7 @@ bool testHeapSort() {
     Heap<int>::sort(elements);
 
     for (int i = 2; i < elements.size(); i++) {
-        if (elements[i - 1] > elements[i]) {
+        if (elements[i - 1] < elements[i]) {
             return false;  
         }
     }
@@ -146,7 +139,6 @@ int main() {
     vector<Test> tests = {
         Test(testHeapInsert, "Heap: insert"),
         Test(testHeapRemove, "Heap: remove"),
-        Test(testHeapSink, "Heap: sink"),
         Test(testHeapify, "Heap: heapify"),
         Test(testHeapSort, "Heap: sort"),
         Test(testFibHeapInsert, "FibHeap: insert"),

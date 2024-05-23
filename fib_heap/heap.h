@@ -30,7 +30,7 @@ public:
   }
 
   static void swim(vector<T> &arr, int i) {
-    while (i > 1 && arr[ i / 2 ] < arr[i]){
+    while (i > 1 && arr[ i / 2 ] > arr[i]){
       std::swap(arr[i], arr[i/2]);
       i = i/2;
     }
@@ -40,8 +40,8 @@ public:
     while (2*i <= n){
       int j = 2*i;
 
-      if (j < n && arr[j]<arr[j+1]) j++;
-      if (arr[i]>=arr[j]) break;
+      if (j < n && arr[j]>arr[j+1]) j++;
+      if (arr[i]<=arr[j]) break;
 
       swap(arr[i],arr[j]);
       i = j;
@@ -66,6 +66,8 @@ public:
   }
 
   int size() { return elements.size(); }
+
+  int valueOf(int indx) { return elements[indx]; }
 
   T &head(){
     return elements[1];

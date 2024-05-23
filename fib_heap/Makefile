@@ -1,5 +1,5 @@
 CXX = g++
-CXXFLAGS = -std=c++11
+CXXFLAGS = -std=c++20
 BIN_DIR = bin
 SRC_DIR = .
 INCLUDE_DIR = include

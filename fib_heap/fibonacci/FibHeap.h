@@ -1,6 +1,7 @@
 
 #include <cmath>
 #include <vector>
+#include <iostream>
 #include "../heap_def.h"
 
 using namespace std;
@@ -57,6 +58,13 @@ public:
 		m_numOfNodes += another.m_numOfNodes;
 		another.m_minNode = nullptr; // so that another 
 		another.m_numOfNodes = 0;
+	}
+
+	/* Return the key of the minimum node*/				
+	//int  removeMinimum();  RENAMED
+	FibHeapNode* removeMinimumGetNode(){
+		FibHeapNode* minNode = _extract_min_node();
+		return minNode;
 	}
 
 	/* Return the key of the minimum node*/				
