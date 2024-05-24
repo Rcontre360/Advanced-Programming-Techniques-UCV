@@ -284,11 +284,9 @@ void benchmarkRandomAverage(
 
     for (int i=0; i < times; i++){
         double op_time = operation(args);
-        cout << "op_time " << op_time << endl;
         all += op_time;
     }
 
-    cout << "all: " << all / times << " " << times << endl;
     double avr = all / times;
     cout << "done: " << "Random" << "|" << size << endl;
     file << heap << "," << "Random" << "," << size << "," << avr << "\n";
@@ -354,8 +352,7 @@ void benchmarkAndLogDecreaseKeyHeap(
     heapDecreaseKey(heap,arrChanges);
     auto end = high_resolution_clock::now();
     duration<double, micro> time = end - start;
-
-    cout << "done:" << "DecreaseKey" << "|" << size << "\n";
+cout << "done:" << "DecreaseKey" << "|" << size << "\n";
     file << "Heap," << "DecreaseKey," << size << "," << time.count() << "\n";
 }
 
@@ -367,7 +364,7 @@ void individualOperationsBenchmark() {
     heapFile << "Heap,Operation,Times,Time (μs)\n";
     fibFile << "Heap,Operation,Times,Time (μs)\n";
 
-    for (int i=10000; i <= 1000000; i+=10000){
+    for (int i=10000; i <= 10000000; i+=10000){
         sizes.push_back(i);
     }
 
@@ -419,19 +416,19 @@ void randomOperationsBenchmark() {
     heapFile << "Heap,Operation,Times,Time (μs)\n";
     fibFile << "Heap,Operation,Times,Time (μs)\n";
 
-    for (int i=100; i*100 <= 1000000; i+=100){
+    for (int i=100; i <= 10000; i+=100){
         sizes.push_back(i);
     }
 
     for (int size : sizes) {
-        thread threads[2];
+        thread threads[1];
 
         threads[0] = std::thread([=, &fibFile]() {
-            benchmarkRandomAverage("FibHeap", size, size*100, fibFile, initFibRandomArgs,fibHeapRandomOp);
+            benchmarkRandomAverage("FibHeap", size, size, fibFile, initFibRandomArgs,fibHeapRandomOp);
         });
-        threads[1] = std::thread([=, &heapFile]() {
-            benchmarkRandomAverage("Heap", size, size*100, heapFile, initHeapRandomArgs,heapRandomOp);
-        });
+        //threads[0] = std::thread([=, &heapFile]() {
+            //benchmarkRandomAverage("Heap", size, size*100, heapFile, initHeapRandomArgs,heapRandomOp);
+        //});
 
         for (auto& th : threads) {
             th.join();
