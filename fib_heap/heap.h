@@ -77,6 +77,12 @@ public:
     return elements[1];
   }
 
+  void merge(Heap* heap){
+    for (int i=1; i < heap->elements.size(); i++){
+      this->insert(heap->elements[i]);
+    }
+  }
+
   void insert(const T &val) {
     elements.push_back(val);
     swim(elements.size() - 1);
