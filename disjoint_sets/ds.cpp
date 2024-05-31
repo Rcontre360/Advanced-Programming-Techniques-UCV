@@ -1,92 +1,122 @@
-#include <iostream>
-#include <vector>
+#include <bits/stdc++.h>
 using namespace std;
 
+template <class T>
 class DisjointSet {
 private:
-  vector<int> parentOf;
+  // instead of vector, map to support more cases
+  unordered_map<T,T> parentOf;
+  // weight that measures the size of a parent
+  unordered_map<T,int> weight;
+  // track already inserted elements
+  unordered_map<T,bool> visited;
 
   //goes up from x to its parents compressing. Parent must be parent of x
-  void _compress(int x, int parent){
-    while (parentOf[x] > 0){
-      int temp = x;
+  void _compress(T x, T parent){
+    while (_hasParent(x)){
+      T temp = x;
       x = parentOf[x];
       parentOf[temp] = parent;
     }
   }
 
-public:
-  DisjointSet(int size) { 
-    parentOf = vector<int>(size);
+  bool _hasParent(T x){
+    bool res = parentOf.count(x) > 0;
+    return res;
   }
+
+public:
+  DisjointSet() {}
 
   int count_sets(){
     int res = 0;
     for (auto x:parentOf)
-      res += x <= 0? 1 : 0;
-    return res-1; // minus pos 0 bc its not used
+      if (weight[x.first] > 0)
+        res+=1; 
+    return res; // minus pos 0 bc its not used
   }
 
   void print(){
-    cout << "print" << endl;
+    cout << "parent: ";
     for (auto x:parentOf)
-      cout << x << " ";
+      cout << "(" << x.first << " " << x.second << "), ";
+    cout << endl << "weight: ";
+    for (auto x:weight)
+      cout << "(" << x.first << " " << x.second << "), ";
     cout << endl;
   }
 
-  int find(int node){
-    int parent = parentOf[node];
-    while(parentOf[parent] > 0){parent = parentOf[parent];}
+  T find(T node){
+    if (!_hasParent(node))
+      return node;
+
+    // here the unordered_map weirdly assigns to parentOf[node]
+    T parent = parentOf[node];
+    while(_hasParent(parent)){parent = parentOf[parent];}
+
     return parent;
   }
 
-  int pertenencia(int x, int y, bool u) {
-    int i=x, j=y;
+  int groupSize(T node){
+    int _weight = weight[find(node)]; 
+    return _weight > 0 ? _weight : 1;
+  }
 
-    while(parentOf[i]>0) i=parentOf[i]; 
-    while(parentOf[j]>0) j=parentOf[j];
+  bool pertenencia(T x, T y, bool u) {
+    T i=x, j=y;
+
+    while(_hasParent(i)) i=parentOf[i]; 
+    while(_hasParent(j)) j=parentOf[j];
 
     _compress(x,i);
     _compress(y,j);
 
     if (u && (i!=j)) {
-      if (parentOf[j] < parentOf[i]){ 
-        parentOf[j]+=parentOf[i]-1; 
+      if (weight[j] < weight[i]){ 
+        weight[j]+=weight[i]+1; 
+        weight[i] = 0;
         parentOf[i]=j; 
       }else { 
-        parentOf[i]+=parentOf[j]-1; 
+        weight[i]+=weight[j]+1; 
+        weight[j] = 0;
         parentOf[j]=i; 
       }
     }
 
     return i!=j;
   }
-
-  void insert(int node,int parent){
-    parentOf[node] = parent; //set element parent
-    while (parentOf[parent]>0) parent = parentOf[parent]; //search parent
-    _compress(node,parent);
-    parentOf[parent]-=1; //increase parents balance
-  }
 };
 
 
 //SPOJ: FOXLINGS - Foxlings
 int main(){
-  int n,m;
+  int t;
 
-  cin >> n >> m;
+  cin >> t;
 
-  DisjointSet* ds = new DisjointSet(n);
-  
-  for (int i=0;i < m; i++){
-    int a,b;
-    cin >> a >> b;
-    ds->insert(a,b);
+  while (t--){
+    int n;
+    string a,b;
+    DisjointSet<string>* ds = new DisjointSet<string>();
+    unordered_map<string,bool> visited;
+
+    cin >> n;
+
+    while (n--){
+
+      cin >> a >> b;
+
+      if (visited[a] && visited[b]) //already set both
+        continue;
+      if (visited[a]) //only node set, so it will be the parent
+        swap(a,b);
+
+      ds->pertenencia(a,b,true);
+
+      cout << ds->groupSize(a) + 1 << endl;
+    }
   }
-
-  ds->print();
-  cout << ds->count_sets();
+  
 
   return 0;
 }
