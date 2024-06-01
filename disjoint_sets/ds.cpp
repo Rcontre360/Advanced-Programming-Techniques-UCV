@@ -20,6 +20,7 @@ private:
     }
   }
 
+  // checks if a key has been used
   bool _hasParent(T x){
     bool res = parentOf.count(x) > 0;
     return res;
@@ -27,14 +28,6 @@ private:
 
 public:
   DisjointSet() {}
-
-  int count_sets(){
-    int res = 0;
-    for (auto x:parentOf)
-      if (weight[x.first] > 0)
-        res+=1; 
-    return res; // minus pos 0 bc its not used
-  }
 
   void print(){
     cout << "parent: ";
@@ -47,16 +40,18 @@ public:
   }
 
   T find(T node){
+    // here the unordered_map weirdly assigns to parentOf[node]
+    // so to avoid that we first check if node has a parent
     if (!_hasParent(node))
       return node;
 
-    // here the unordered_map weirdly assigns to parentOf[node]
     T parent = parentOf[node];
     while(_hasParent(parent)){parent = parentOf[parent];}
 
     return parent;
   }
 
+  // get the size of a group given a member of it
   int groupSize(T node){
     int _weight = weight[find(node)]; 
     return _weight > 0 ? _weight : 1;
@@ -65,12 +60,15 @@ public:
   bool pertenencia(T x, T y, bool u) {
     T i=x, j=y;
 
+    //get parents
     while(_hasParent(i)) i=parentOf[i]; 
     while(_hasParent(j)) j=parentOf[j];
 
+    //compress given node and parents
     _compress(x,i);
     _compress(y,j);
 
+    //assign if needed
     if (u && (i!=j)) {
       if (weight[j] < weight[i]){ 
         weight[j]+=weight[i]+1; 

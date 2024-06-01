@@ -75,44 +75,126 @@ MapSetup setupMap(int size){
     return MapSetup(mp,size, pairs);
 }
 
-int unorderedMapRemove(UnorderedSetup setup){
-    return 0;
+double unorderedMapRemove(UnorderedSetup setup){
+    double totalTime = 0;
+
+    for (auto remove:setup.inserted){
+        auto start = high_resolution_clock::now(); 
+        setup.mp.erase(remove.first);
+        auto end = high_resolution_clock::now(); 
+        
+        duration<double, micro> elapsed = end-start;
+        totalTime += elapsed.count();
+    }
+
+    return totalTime;
 }
 
 int mapRemove(MapSetup setup){
-    return 0;
+    double totalTime = 0;
+
+    for (auto remove:setup.inserted){
+        auto start = high_resolution_clock::now(); 
+        setup.mp.erase(remove.first);
+        auto end = high_resolution_clock::now(); 
+        
+        duration<double, micro> elapsed = end-start;
+        totalTime += elapsed.count();
+    }
+
+    return totalTime;
 }
 
 int unorderedMapSearch(UnorderedSetup setup){
-    return 0;
+    int times = setup.size;
+    double totalTime = 0;
+
+    for (int i=0;i < times; i++){
+        int indx = rand(0,setup.inserted.size()-1);
+        auto inserted = setup.inserted[indx];
+
+        auto start = high_resolution_clock::now(); 
+        setup.mp[inserted.first];
+        auto end = high_resolution_clock::now(); 
+        
+        duration<double, micro> elapsed = end-start;
+        totalTime += elapsed.count();
+    }
+
+    return totalTime;
+
 }
 
 int mapSearch(MapSetup setup){
-    return 0;
+    int times = setup.size;
+    double totalTime = 0;
+
+    for (int i=0;i < times; i++){
+        int indx = rand(0,setup.inserted.size()-1);
+        auto inserted = setup.inserted[indx];
+
+        auto start = high_resolution_clock::now(); 
+        setup.mp[inserted.first];
+        auto end = high_resolution_clock::now(); 
+        
+        duration<double, micro> elapsed = end-start;
+        totalTime += elapsed.count();
+    }
+
+    return totalTime;
 }
 
 int unorderedMapInsert(UnorderedSetup setup){
-    return 0;
+    int times = setup.size;
+    double totalTime = 0;
+
+    for (int i=0;i < times; i++){
+        auto randKeyVal = randPairs(1)[0];
+
+        auto start = high_resolution_clock::now(); 
+        setup.mp[randKeyVal.first] = randKeyVal.second;
+        auto end = high_resolution_clock::now(); 
+        
+        duration<double, micro> elapsed = end-start;
+        totalTime += elapsed.count();
+    }
+
+    return totalTime;
 }
 
 int mapInsert(MapSetup setup){
-    return 0;
+    int times = setup.size;
+    double totalTime = 0;
+
+    for (int i=0;i < times; i++){
+        auto randKeyVal = randPairs(1)[0];
+
+        //measure
+        auto start = high_resolution_clock::now(); 
+        setup.mp[randKeyVal.first] = randKeyVal.second;
+        auto end = high_resolution_clock::now(); 
+        
+        duration<double, micro> elapsed = end-start;
+        totalTime+=elapsed.count();
+    }
+
+    return totalTime;
 }
 
 double unorderedMapRandomOp(UnorderedSetup setup){
     int times = setup.size;
     double totalTime = 0;
 
-    for (int i=0;i < times; i++){
+    for (int i=0;i < times*10; i++){
         //operation to perform
         int op = rand(1,3);
         //random index of all inserted elements
-        int indx = rand(0,setup.inserted.size());
+        int indx = rand(0,setup.inserted.size()-1);
         auto inserted = setup.inserted[indx];
         //random to insert or search for
         auto randKeyVal = randPairs(1)[0];
 
-        auto start = high_resolution_clock::now(); // Placeholder, will be reset in each case
+        auto start = high_resolution_clock::now(); 
         //we only benchmark the switch
         switch (op){
             case 1: //insert
@@ -125,37 +207,37 @@ double unorderedMapRandomOp(UnorderedSetup setup){
                 setup.mp.erase(inserted.first);
                 break;
         }
-        auto end = high_resolution_clock::now();   // Placeholder, will be reset in each case
+        auto end = high_resolution_clock::now();   
 
-        //we need to remove or add the element from the list. To avoid errors on the tests cases
+        //we need to keep the size consistent in our testing. This also avoids seg fault because of deletes
         if (op == 3){
-            setup.inserted.erase(setup.inserted.begin() + indx);
+            setup.mp[inserted.first] = inserted.second;
         }
         if (op == 1){
-            setup.inserted.push_back(randKeyVal);
+            setup.mp.erase(randKeyVal.first);
         }
 
-        totalTime += (end-start).count();
+        duration<double, micro> elapsed = end-start;
+        totalTime += elapsed.count();
     }
 
     //return average time
     return totalTime / times;
 }
-
 double mapRandomOp(MapSetup setup){
     int times = setup.size;
     double totalTime = 0;
 
-    for (int i=0;i < times; i++){
+    for (int i=0;i < times*10; i++){
         //operation to perform
         int op = rand(1,3);
         //random index of all inserted elements
-        int indx = rand(0,setup.inserted.size());
+        int indx = rand(0,setup.inserted.size()-1);
         auto inserted = setup.inserted[indx];
         //random to insert or search for
         auto randKeyVal = randPairs(1)[0];
 
-        auto start = high_resolution_clock::now(); // Placeholder, will be reset in each case
+        auto start = high_resolution_clock::now(); 
         //we only benchmark the switch
         switch (op){
             case 1: //insert
@@ -168,17 +250,18 @@ double mapRandomOp(MapSetup setup){
                 setup.mp.erase(inserted.first);
                 break;
         }
-        auto end = high_resolution_clock::now();   // Placeholder, will be reset in each case
+        auto end = high_resolution_clock::now();   
 
-        //we need to remove or add the element from the list. To avoid errors on the tests cases
+        //we need to keep the size consistent in our testing. This also avoids seg fault because of deletes
         if (op == 3){
-            setup.inserted.erase(setup.inserted.begin() + indx);
+            setup.mp[inserted.first] = inserted.second;
         }
         if (op == 1){
-            setup.inserted.push_back(randKeyVal);
+            setup.mp.erase(inserted.first);
         }
 
-        totalTime += (end-start).count();
+        duration<double, micro> elapsed = end-start;
+        totalTime += elapsed.count();
     }
 
     //return average time
@@ -196,7 +279,6 @@ void benchmarkAndLog(
 ){
     double time = operation(setup(size));
 
-    cout << "done: " << hash_map << "|" << size << endl;
     file << hash_map << "," << measure << "," << size << "," << time << "\n";
 }
 
@@ -209,24 +291,51 @@ int main() {
     mapFile << "Type,Measure,Size,Time\n";
     unorderedFile << "Type,Measure,Size,Time\n";
 
-    for (int i=10000; i<100000; i+=10000){
+    for (int i=10000; i<=300000; i+=10000){
+        sizes.push_back(i);
+    }
+    for (int i=300000; i<=1000000; i+=100000){
+        sizes.push_back(i);
+    }
+    for (int i=1000000; i<=3000000; i+=500000){
         sizes.push_back(i);
     }
 
     for (int size : sizes) {
-        thread threads[8];
+        vector<thread> threads;
 
-        threads[0] =  thread([=, &mapFile]() {
-            benchmarkAndLog("Map", "AllRandom", size, ref(mapFile), mapRandomOp, setupMap);
-        });
-
-        threads[1] =  thread([=, &unorderedFile]() {
+        //UnorderedMap
+        threads.push_back(thread([=, &unorderedFile]() {
             benchmarkAndLog("UnorderedMap","AllRandom", size, ref(unorderedFile), unorderedMapRandomOp, setupUnorderedMap);
-        });
+        }));
+        threads.push_back(  thread([=, &unorderedFile]() {
+            benchmarkAndLog("UnorderedMap","Insert", size, ref(unorderedFile), unorderedMapInsert, setupUnorderedMap);
+        }));
+        threads.push_back(  thread([=, &unorderedFile]() {
+            benchmarkAndLog("UnorderedMap","Search", size, ref(unorderedFile), unorderedMapSearch, setupUnorderedMap);
+        }));
+        threads.push_back(  thread([=, &unorderedFile]() {
+            benchmarkAndLog("UnorderedMap","Remove", size, ref(unorderedFile), unorderedMapRemove, setupUnorderedMap);
+        }));
+
+        //Map
+        threads.push_back(  thread([=, &mapFile]() {
+            benchmarkAndLog("Map","AllRandom", size, ref(mapFile), mapRandomOp, setupMap);
+        }));
+        threads.push_back(  thread([=, &mapFile]() {
+            benchmarkAndLog("Map","Insert", size, ref(mapFile), mapInsert, setupMap);
+        }));
+        threads.push_back(  thread([=, &mapFile]() {
+            benchmarkAndLog("Map","Search", size, ref(mapFile), mapSearch, setupMap);
+        }));
+        threads.push_back(  thread([=, &mapFile]() {
+            benchmarkAndLog("Map","Remove", size, ref(mapFile), mapRemove, setupMap);
+        }));
 
         for (auto& th : threads) {
             th.join();
         }
+        cout << "done: " << size << endl;
     }
 
     mapFile.close();
